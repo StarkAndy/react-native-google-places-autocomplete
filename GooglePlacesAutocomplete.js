@@ -84,11 +84,12 @@ export default class GooglePlacesAutocomplete extends Component {
   getInitialState = () => ({
     text: this.props.getDefaultValue(),
     dataSource: this.buildRowsFromResults([]),
-    listViewDisplayed:
-      this.props.listViewDisplayed === 'auto'
-        ? false
-        : this.props.listViewDisplayed,
+    listViewDisplayed:false,
     url: this.getRequestUrl(this.props.requestUrl),
+
+    // this.props.listViewDisplayed === 'auto'
+    // ? false
+    // : this.props.listViewDisplayed,
   });
 
   getRequestUrl = (requestUrl) => {
