@@ -78,18 +78,16 @@ export default class GooglePlacesAutocomplete extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getInitialState.call(this);
+    this.state = this.getInitialState.call(this);  
   }
 
   getInitialState = () => ({
     text: this.props.getDefaultValue(),
     dataSource: this.buildRowsFromResults([]),
-    listViewDisplayed:false,
+    listViewDisplayed:this.props.listViewDisplayed === 'auto'
+    ? false
+    : this.props.listViewDisplayed,
     url: this.getRequestUrl(this.props.requestUrl),
-
-    // this.props.listViewDisplayed === 'auto'
-    // ? false
-    // : this.props.listViewDisplayed,
   });
 
   getRequestUrl = (requestUrl) => {
@@ -498,15 +496,23 @@ export default class GooglePlacesAutocomplete extends Component {
             }
           }
           if (typeof responseJSON.error_message !== 'undefined') {
-            if (!this.props.onFail)
+            if (!this.props.onFail){
+
+             const erroWhileLoading=true;
+             const helloError=true;
               console.warn(
                 'google places autocomplete: ' + responseJSON.error_message,
               );
-            else {
+              }else {
+            const erroWhileLoading=true;
+             const helloError=true;
               this.props.onFail(responseJSON.error_message);
             }
           }
         } else {
+          const erroWhileLoading=true;
+          const helloError=true;
+
           // console.warn("google places autocomplete: request could not be completed or has been aborted");
         }
       };
@@ -576,6 +582,10 @@ export default class GooglePlacesAutocomplete extends Component {
               this.setState({
                 dataSource: this.buildRowsFromResults(results),
               });
+
+              if(this.state.dataSource.length<1){
+                this.props.autoFillOnNotFound && this.props.autoFillOnNotFound(true)
+              }
             }
           }
           if (typeof responseJSON.error_message !== 'undefined') {
@@ -624,7 +634,6 @@ export default class GooglePlacesAutocomplete extends Component {
 
     this.setState({
       text: text,
-      listViewDisplayed: this._isMounted || this.props.autoFocus,
     });
   };
 
@@ -745,7 +754,7 @@ export default class GooglePlacesAutocomplete extends Component {
     });
   };
 
-  _onFocus = () => this.setState({ listViewDisplayed: true });
+  _onFocus = () => {}
 
   _renderPoweredLogo = () => {
     if (!this._shouldShowPoweredLogo()) {
@@ -808,13 +817,15 @@ export default class GooglePlacesAutocomplete extends Component {
 
   _getFlatList = () => {
     const keyGenerator = () => Math.random().toString(36).substr(2, 10);
+    const defaultMaxLength=this.props.minLength !== undefined?this.props.minLength :0;
+
+    if(this.state.dataSource.length<1){
+      return ;
+    }
 
     if (
-      this.supportedPlatform() &&
-      (this.state.text !== '' ||
-        this.props.predefinedPlaces.length ||
-        this.props.currentLocation === true) &&
-      this.state.listViewDisplayed === true
+      this.state.listViewDisplayed === true &&
+      this.state.text.length>defaultMaxLength
     ) {
       return (
         <FlatList
