@@ -585,6 +585,8 @@ export default class GooglePlacesAutocomplete extends Component {
 
               if(this.state.dataSource.length<1){
                 this.props.autoFillOnNotFound && this.props.autoFillOnNotFound(true)
+              }else{
+                this.props.autoFillOnNotFound && this.props.autoFillOnNotFound(false)
               }
             }
           }
